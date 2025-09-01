@@ -2,6 +2,6 @@ from . import models
 
 book = models.Book.objects.all()
 
-book_in_library = models.Library.objects.all()
+library = models.Library.objects.get(name='Elyas')
 
-librarian = models.Librarian.objects.all()
+librarian = models.Librarian.objects.get(name='Elyas')
