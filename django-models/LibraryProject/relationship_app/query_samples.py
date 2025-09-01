@@ -1,7 +1,12 @@
 from . import models
 
-book = models.Book.objects.all()
+# All books by a specific Author
+author = models.Author(name='Elyas')
+all_book_by_author = models.Book.objects.get(author=author)
 
-library = models.Library.objects.get(name='Elyas')
+# All books in a library
+library = models.Library(name='Central')
+all_book_in_library = library.book.all()
 
-librarian = models.Librarian.objects.get(name='Elyas')
+# Retrieve a librarian for a library
+librarian = models.Librarian.objects.get(library=library)
