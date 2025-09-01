@@ -5,7 +5,8 @@ all_book_by_author = Book.objects.get(author='Elyas')
 
 # All books in a library
 library_name = 'Central'
-library = Library.objects.get(name=library_name).book.all()
+library = Library.objects.get(name=library_name)
+all_books_in_library = library.books.all()
 
 # Retrieve a librarian for a library
 librarian = Librarian.objects.get(library=library)
