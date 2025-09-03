@@ -1,11 +1,11 @@
-from django.contrib.auth.views import LoginView
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect
+from .models import Library, Book
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
-from django.views.generic.detail import DetailView
-from .models import Book
-from .models import Library
-from django.contrib.auth.forms import UserCreationForm
+from django.views.generic import DetailView, CreateView
+
 
 # Create your views here.
 def list_books(request):
@@ -22,12 +22,21 @@ class SignUpView(CreateView):
     success_url = reverse_lazy('home')
     template_name = 'relationship_app/register.html'
 
-class CustomLoginView(LoginView):
-    template_name = "relationship_app/login.html"
-    redirect_field_name = True
-    success_url = reverse_lazy('home')
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect(reverse_lazy('home'))
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'relationship_app/login.html', {'form': form})
 
 def logout_view(request):
+    logout(request)
     return render(request, 'relationship_app/logout.html')
 
 def home(request):
