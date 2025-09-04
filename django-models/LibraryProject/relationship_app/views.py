@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from .models import Library, Book
 from django.urls import reverse_lazy
 from django.views.generic import DetailView
+from django.contrib.auth.decorators import user_passes_test
 
 
 # Create your views here.
@@ -31,3 +32,15 @@ def register(request):
 
 def home(request):
     return render(request, 'relationship_app/home.html')
+
+user_passes_test(lambda u: u.userprofile.role == 'Admin')
+def admin_view(request):
+    return render(request, 'relationship_app/admin_view.html')
+
+user_passes_test(lambda u: u.userprofile.role == 'Librarian')
+def librarian_view(request):
+    return render(request, 'relationship_app/librarian_view.html')
+
+user_passes_test(lambda u: u.userprofile.role == 'Member')
+def member_view(request):
+    return render(request, 'relationship_app/member_view.html')
