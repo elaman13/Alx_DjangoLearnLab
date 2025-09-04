@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from .models import Library, Book
 from django.urls import reverse_lazy
-from django.views.generic import DetailView
+from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import user_passes_test
 
 
