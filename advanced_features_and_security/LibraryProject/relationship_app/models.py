@@ -37,3 +37,4 @@ class UserProfile(models.Model):
     role = models.CharField(max_length=20,
                             default='Member',
                             choices=[('Admin', 'Admin'), ('Librarian', 'Librarian'), ('Member', 'Member')])
+    
