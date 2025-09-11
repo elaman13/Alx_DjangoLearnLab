@@ -1,9 +1,20 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from . import models
+from .forms import ExampleForm
 from django.contrib.auth.decorators import permission_required
 
-# Create your views here.
+def register(request):
+    if request.method == "POST":
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = ExampleForm()
+    return render(request, "relationship_app/register.html", {"form": form})
+
+
 @permission_required('bookshelf.can_view', raise_exception=True)
 def book_list(request):
     books = models.Book.objects.all()
