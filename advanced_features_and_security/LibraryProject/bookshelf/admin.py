@@ -18,13 +18,13 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
         (None, {
             "fields": (
-                'phone_number', 'birth_date'
+                'profile_photo', 'date_of_birth'
             ),
         }),
     )
     
     add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {'fields': ('phone_number', 'birth_date'
+        (None, {'fields': ('profile_photo', 'date_of_birth'
             ),
         }),
     )
