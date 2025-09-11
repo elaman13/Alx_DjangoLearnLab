@@ -18,7 +18,7 @@ def register(request):
 @permission_required('bookshelf.can_view', raise_exception=True)
 def book_list(request):
     books = models.Book.objects.all()
-    return render(request, 'list_books.html', {'books': books})
+    return render(request, 'bookshelf/list_books.html', {'books': books})
 
 def viewers(request):
     if request.user.has_perm('bookshelf.can_view'):
