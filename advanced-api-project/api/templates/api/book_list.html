@@ -8,7 +8,9 @@
     <h1>Book List</h1>
     <ul>
       {% for book in books %}
-      <li>{{ book.title }} by {{ book.author }}</li>
+      <li>
+        {{ book.title }} by {{ book.author }} in {{ book.publication_year }}
+      </li>
       {% endfor %}
     </ul>
   </body>
