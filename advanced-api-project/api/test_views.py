@@ -6,16 +6,15 @@ from django.contrib.auth.models import User
 
 class BookAPITests(APITestCase):
     def setUp(self):
-        # Create a test user
         self.user = User.objects.create_user(username="testuser", password="password123")
         self.client = APIClient()
         self.client.login(username="testuser", password="password123")  
 
-        # Create a book
+        
         self.book = Book.objects.create(title="Django Basics", author="John Doe", publication_year=2024)
 
     def test_list_books(self):
-        url = reverse('book-list')  # make sure this matches your urls.py name
+        url = reverse('book-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("Django Basics", str(response.data))
