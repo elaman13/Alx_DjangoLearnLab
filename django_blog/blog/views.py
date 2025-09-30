@@ -2,7 +2,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.views import generic
 from django.urls import reverse_lazy
 from . import models
@@ -76,11 +76,16 @@ class PostCreateView(LoginRequiredMixin ,generic.CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-class PostUpdateView(generic.UpdateView):
+class PostUpdateView(UserPassesTestMixin ,generic.UpdateView):
     model = models.Post
     template_name = 'blog/post_update.html'
-    fields = ['title', 'author', 'content']
+    form_class = forms.PostForm
+    login_url = 'login'
     success_url = reverse_lazy('posts')
+    
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user ==  post.author
 
 class PostDeleteView(generic.DeleteView):
     model = models.Post
