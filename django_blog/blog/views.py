@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.views import generic
@@ -91,3 +91,48 @@ class PostDeleteView(generic.DeleteView):
     model = models.Post
     template_name = 'blog/post_delete.html'
     success_url = reverse_lazy('posts')
+
+class CommentListView(generic.ListView):
+    model = models.Comment
+    template_name = 'blog/comments.html'
+    context_object_name = 'comments'
+    
+    def get_queryset(self):
+        post_id = self.kwargs.get('pk')
+        comments = models.Comment.objects.filter(id=post_id)
+        return comments
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post_id'] = self.kwargs.get('pk')  # pass post_id to template
+        return context
+
+class CommentCreateView(generic.CreateView):
+    model = models.Comment
+    form_class = forms.CommentForm
+    template_name = 'blog/comment_create.html'    
+    
+    def form_valid(self, form):
+        post_pk = self.kwargs.get('pk')  # post id passed in URL
+        post = get_object_or_404(models.Post, pk=post_pk)
+        form.instance.post = post
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('comments', kwargs={'pk': self.kwargs.get('pk')})
+
+class CommentUpdateView(generic.UpdateView):
+    model = models.Comment
+    form_class = forms.CommentForm
+    template_name = 'blog/comment_update.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('comments', kwargs={'pk': self.kwargs.get('pk')})
+
+class CommentDeleteView(generic.DeleteView):
+    model = models.Comment
+    template_name = 'blog/comment_delete.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('comments', kwargs={'pk': self.kwargs.get('pk')})
