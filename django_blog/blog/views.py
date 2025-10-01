@@ -7,6 +7,7 @@ from django.views import generic
 from django.urls import reverse_lazy
 from . import models
 from . import forms
+from django.db.models import Q
 
 # Create your views here.
 def login_view(request):
@@ -136,3 +137,36 @@ class CommentDeleteView(generic.DeleteView):
     
     def get_success_url(self):
         return reverse_lazy('comments', kwargs={'pk': self.kwargs.get('pk')})
+
+
+class PostsByTagListView(generic.ListView):
+    model = models.Post
+    template_name = 'blog/posts_by_tag.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+
+    def get_queryset(self):
+        tag_name = self.kwargs.get('tag_name')
+        return models.Post.objects.filter(tags__name__iexact=tag_name).distinct()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tag_name'] = self.kwargs.get('tag_name')
+        return context
+
+class SearchResultsView(generic.ListView):
+    model = models.Post
+    template_name = 'blog/search_results.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '').strip()
+        if not query:
+            return models.Post.objects.none()
+        # search title, content, tags
+        return models.Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()

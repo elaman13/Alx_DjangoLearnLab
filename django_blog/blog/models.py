@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 from django.conf import settings
+from taggit.managers import TaggableManager
 
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -13,6 +14,7 @@ class Post(models.Model):
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) # Foreign key
     published_date = models.DateTimeField(auto_now_add=True)
+    tags = TaggableManager()
     
     def __str__(self):
         return f'{self.title}, {self.author}'
