@@ -139,7 +139,7 @@ class CommentDeleteView(generic.DeleteView):
         return reverse_lazy('comments', kwargs={'pk': self.kwargs.get('pk')})
 
 
-class PostsByTagListView(generic.ListView):
+class PostByTagListView(generic.ListView):
     model = models.Post
     template_name = 'blog/posts_by_tag.html'
     context_object_name = 'posts'
