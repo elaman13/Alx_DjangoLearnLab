@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 # Create your models here.
 class Post(models.Model):
     title = models.CharField(max_length=255)
-    content = models.CharField(max_length=600)
+    content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
