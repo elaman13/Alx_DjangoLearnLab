@@ -24,7 +24,7 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         user = authenticate(**data)
         if user and user.is_active:
-            token, _ = Token.objects.get_or_create(user=user)
+            token, _ = Token.objects.create(user=user)
             return {'username': user.username, 'token': token.key}
         return ValidationError('Invalid Informations.')
 
