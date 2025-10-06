@@ -5,17 +5,15 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework.validators import ValidationError
 
-custom_user = get_user_model()
-
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     
     class Meta:
-        model = custom_user
+        model = get_user_model()
         fields = ['username', 'email', 'password']
     
     def create(self, validated_data):
-        user = custom_user.objects.create_user(**validated_data)
+        user = get_user_model().objects.create_user(**validated_data)
         return user
 
 class LoginSerializer(serializers.Serializer):
@@ -32,5 +30,5 @@ class LoginSerializer(serializers.Serializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = custom_user
+        model = get_user_model()
         fields = ['username', 'email', 'bio', 'profile_picture']
