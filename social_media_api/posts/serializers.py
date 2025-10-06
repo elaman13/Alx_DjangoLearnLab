@@ -2,11 +2,28 @@ from rest_framework import serializers
 from . import models
 
 class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)
+    updated_at = serializers.DateTimeField(read_only=True)
+    
     class Meta:
         model = models.Comment
-        fields = '__all__'
+        fields = ['id', 'post', 'content', 'author', 'created_at', 'updated_at']
+    
+    def create(self, validated_data):
+        request = self.context.get('request')
+        return models.Comment.objects.create(author=request.user, **validated_data)
 
 class PostSerializer(serializers.ModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)
+    updated_at = serializers.DateTimeField(read_only=True)
+
+    
     class Meta:
         model = models.Post
-        fields = '__all__'
+        fields = ['id', 'title', 'content', 'author', 'created_at', 'updated_at']
+    
+    def create(self, validated_data):
+        request = self.context.get('request')
+        return models.Post.objects.create(author=request.user, **validated_data)
