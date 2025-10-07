@@ -28,8 +28,3 @@ class PostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context.get('request')
         return models.Post.objects.create(author=request.user, **validated_data)
-
-class FollowUnfollowSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = get_user_model()
-        fields = ['following']
