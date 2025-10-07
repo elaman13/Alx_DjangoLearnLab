@@ -57,3 +57,11 @@ class UnfollowView(generics.GenericAPIView):
         serializer = self.get_serializer(user.following.all(), many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class FeedView(generics.ListAPIView):
+    queryset = models.Post.objects.all()
+    serializer_class = serializers.PostSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['created_at', 'updated_at']
+    ordering = ['-updated_at']
