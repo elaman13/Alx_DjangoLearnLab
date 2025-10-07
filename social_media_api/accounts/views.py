@@ -36,9 +36,9 @@ class FollowView(generics.GenericAPIView):
     serializer_class = serializers.FollowUnfollowSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, id):
+    def post(self, request, user_id):
         user = request.user
-        added_user = get_object_or_404(get_user_model(), id=id)
+        added_user = get_object_or_404(get_user_model(), id=user_id)
 
         if user.id == added_user.id:
             raise serializers.ValidationError('You cannot follow yourself.')
@@ -53,14 +53,14 @@ class UnfollowView(generics.GenericAPIView):
     serializer_class = serializers.FollowUnfollowSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, id):
+    def post(self, request, user_id):
         user = request.user
-        get_unfollow_user = get_object_or_404(get_user_model(), id=id)
+        get_unfollow_user = get_object_or_404(get_user_model(), id=user_id)
 
         if get_unfollow_user.id == user.id:
             raise serializers.ValidationError('You cannot unfollow yourself.')
 
-        unfollow_user = get_object_or_404(user.following.all(), id=id)
+        unfollow_user = get_object_or_404(user.following.all(), id=user_id)
         user.following.remove(unfollow_user)
 
         serializer = self.get_serializer(user.following.all(), many=True)
