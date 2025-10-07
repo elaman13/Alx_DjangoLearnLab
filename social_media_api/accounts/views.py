@@ -13,16 +13,8 @@ custom_user = get_user_model()
 # Create your views here.
 class RegisterView(generics.CreateAPIView):
     serializer_class = serializers.RegisterSerializer
+    queryset = get_user_model()
     
-    def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        token, _ = Token.objects.get_or_create(user=user)
-        data = serializer.data
-        data['token'] = token.key
-        
-        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class LoginView(generics.CreateAPIView):
