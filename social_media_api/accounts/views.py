@@ -8,12 +8,12 @@ from rest_framework.response import Response
 from rest_framework import status, generics, permissions
 from rest_framework.views import APIView
 
-custom_user = get_user_model()
+CustomUser = get_user_model()
 
 # Create your views here.
 class RegisterView(generics.CreateAPIView):
     serializer_class = serializers.RegisterSerializer
-    queryset = get_user_model()
+    queryset = CustomUser.objects.all()
     
 
 
