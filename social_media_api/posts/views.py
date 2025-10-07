@@ -60,8 +60,10 @@ class UnfollowView(generics.GenericAPIView):
 
 
 class FeedView(generics.ListAPIView):
-    queryset = models.Post.objects.all()
     serializer_class = serializers.PostSerializer
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['created_at', 'updated_at']
-    ordering = ['-updated_at']
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        following_users = user.following.all()
+        return models.Post.objects.filter(author__in=following_users).order_by('-created_at')
