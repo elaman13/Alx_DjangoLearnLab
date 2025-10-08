@@ -6,6 +6,7 @@ from . import models
 from . import serializers
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions
+from rest_framework.exceptions import ValidationError
 
 CustomUser = get_user_model()
 
@@ -41,7 +42,7 @@ class FollowView(generics.GenericAPIView):
         added_user = get_object_or_404(get_user_model(), id=user_id)
 
         if user.id == added_user.id:
-            raise serializers.ValidationError('You cannot follow yourself.')
+            raise ValidationError('You cannot follow yourself.')
         
         user.following.add(added_user)
 
@@ -58,7 +59,7 @@ class UnfollowView(generics.GenericAPIView):
         get_unfollow_user = get_object_or_404(get_user_model(), id=user_id)
 
         if get_unfollow_user.id == user.id:
-            raise serializers.ValidationError('You cannot unfollow yourself.')
+            raise ValidationError('You cannot unfollow yourself.')
 
         unfollow_user = get_object_or_404(user.following.all(), id=user_id)
         user.following.remove(unfollow_user)

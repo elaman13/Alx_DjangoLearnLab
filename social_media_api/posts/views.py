@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework.validators import ValidationError
 from django.shortcuts import get_object_or_404
+from .models import Post
 
 # Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
@@ -31,3 +32,21 @@ class FeedView(generics.ListAPIView):
         user = self.request.user
         following_users = user.following.all()
         return models.Post.objects.filter(author__in=following_users).order_by('-created_at')
+
+class LikeView(generics.GenericAPIView):
+    serializer_class = serializers.LikeUnlikeSerializer
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, id=pk)
+        models.Like.create(post=post, user=request.user)
+
+        return Response({"liked": True}, status=status.HTTP_201_CREATED)
+
+class UnLikeView(generics.GenericAPIView):
+    serializer_class = serializers.LikeUnlikeSerializer
+
+    def post(self, request, pk):
+        like = get_object_or_404(models.Like, id=pk, user=request.user)
+        like.delete()
+
+        return Response({"unlike": True}, status=status.HTTP_201_CREATED)
