@@ -3,6 +3,7 @@ from . import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from rest_framework.validators import ValidationError
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -26,7 +27,7 @@ class LoginSerializer(serializers.Serializer):
             Token.objects.filter(user=user).delete()
             token = Token.objects.create(user=user)
             return {"username": user.username, "token": token.key}
-        raise serializers.ValidationError("Invalid Informations.")
+        raise ValidationError("Invalid Informations.")
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:

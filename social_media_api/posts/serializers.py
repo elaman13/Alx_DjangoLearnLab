@@ -28,3 +28,10 @@ class PostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context.get('request')
         return models.Post.objects.create(author=request.user, **validated_data)
+
+class LikeUnlikeSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = models.Like
+        fields = ['post', 'user']

@@ -31,3 +31,28 @@ class FeedView(generics.ListAPIView):
         user = self.request.user
         following_users = user.following.all()
         return models.Post.objects.filter(author__in=following_users).order_by('-created_at')
+
+class LikeView(generics.GenericAPIView):
+    serializer_class = serializers.LikeUnlikeSerializer
+
+    def post(self, request, pk):
+        post = get_object_or_404(models.Post, id=pk)
+
+        serializer = self.get_serializer(data={'post': post.id, 'user': request.user.id})
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save(user=request.user)
+
+        return Response({"liked": serializer.data}, status=status.HTTP_201_CREATED)
+
+class UnLikeView(generics.GenericAPIView):
+    serializer_class = serializers.LikeUnlikeSerializer
+
+    def post(self, request, pk):
+        like = get_object_or_404(models.Like, id=pk, user=request.user)
+        like.delete()
+
+        user_like = models.Like.objects.filter(user=request.user.id)
+        serializer = self.get_serializer(user_like, many=True)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
