@@ -6,7 +6,9 @@ from rest_framework.response import Response
 from rest_framework.validators import ValidationError
 from django.shortcuts import get_object_or_404
 from .models import Post, Like
+from notifications.models import Notification
 from rest_framework import generics
+from django.contrib.contenttypes.models import ContentType
 
 # Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
@@ -36,12 +38,24 @@ class FeedView(generics.ListAPIView):
 
 class LikeView(generics.GenericAPIView):
     serializer_class = serializers.LikeUnlikeSerializer
-
+    
     def post(self, request, pk):
         post = generics.get_object_or_404(Post, pk=pk)
-        Like.objects.get_or_create(user=request.user, post=post)
 
-        return Response({"liked": True}, status=status.HTTP_201_CREATED)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        if created:
+            Notification.objects.create(
+                recipient=post.author,
+                actor=request.user,
+                verb= f'{request.user.username} liked your video.',
+                content_type = ContentType.objects.get_for_model(Post),
+                object_id = post.id,
+                target = post,
+            )
+            return Response({'liked': True}, status=status.HTTP_201_CREATED)
+        else:
+            # user already liked the post
+            return Response({'liked': False, 'detail': 'Already liked'}, status=status.HTTP_200_OK)
 
 class UnLikeView(generics.GenericAPIView):
     serializer_class = serializers.LikeUnlikeSerializer
