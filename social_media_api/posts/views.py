@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.validators import ValidationError
 from django.shortcuts import get_object_or_404
 from .models import Post, Like
+from rest_framework import generics
 
 # Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
@@ -46,7 +47,7 @@ class UnLikeView(generics.GenericAPIView):
     serializer_class = serializers.LikeUnlikeSerializer
 
     def post(self, request, pk):
-        like = get_object_or_404(models.Like, pk=pk)
+        like = generics.get_object_or_404(Like, pk=pk)
         like.delete()
 
         return Response({"unlike": True}, status=status.HTTP_201_CREATED)
