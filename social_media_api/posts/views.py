@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework.validators import ValidationError
 from django.shortcuts import get_object_or_404
-from .models import Post
+from .models import Post, Like
 
 # Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
@@ -38,7 +38,7 @@ class LikeView(generics.GenericAPIView):
 
     def post(self, request, pk):
         post = get_object_or_404(Post, id=pk)
-        models.Like.create(post=post, user=request.user)
+        Like.objects.get_or_create(user=request.user, post=post)
 
         return Response({"liked": True}, status=status.HTTP_201_CREATED)
 
@@ -46,7 +46,7 @@ class UnLikeView(generics.GenericAPIView):
     serializer_class = serializers.LikeUnlikeSerializer
 
     def post(self, request, pk):
-        like = get_object_or_404(models.Like, pk=pk, user=request.user)
+        like = get_object_or_404(models.Like, pk=pk)
         like.delete()
 
         return Response({"unlike": True}, status=status.HTTP_201_CREATED)
