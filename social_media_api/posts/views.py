@@ -38,7 +38,7 @@ class LikeView(generics.GenericAPIView):
     serializer_class = serializers.LikeUnlikeSerializer
 
     def post(self, request, pk):
-        post = get_object_or_404(Post, id=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
         Like.objects.get_or_create(user=request.user, post=post)
 
         return Response({"liked": True}, status=status.HTTP_201_CREATED)
