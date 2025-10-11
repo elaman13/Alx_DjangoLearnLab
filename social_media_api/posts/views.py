@@ -46,7 +46,7 @@ class UnLikeView(generics.GenericAPIView):
     serializer_class = serializers.LikeUnlikeSerializer
 
     def post(self, request, pk):
-        like = get_object_or_404(models.Like, id=pk, user=request.user)
+        like = get_object_or_404(models.Like, pk=pk, user=request.user)
         like.delete()
 
         return Response({"unlike": True}, status=status.HTTP_201_CREATED)
